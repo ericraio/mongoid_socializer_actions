@@ -16,10 +16,10 @@ module Mongoid
         model.before_followed_by(self) if model.respond_to?('before_followed_by')
         model.follows.create!(follower: self)
         model.followers << self
-        model.inc(:followers_count, 1)
+        model.inc(followers_count: 1)
         model.after_followed_by(self) if model.respond_to?('after_followed_by')
         self.before_follow(model) if self.respond_to?('before_follow')
-        self.inc(:follows_count, 1)
+        self.inc(follows_count: 1)
         self.after_follow(model) if self.respond_to?('after_follow')
         return true
       else
@@ -42,11 +42,11 @@ module Mongoid
         follows.where(:followable_type => model.class.name, :followable_id => model.id).destroy
         model.followers.delete(self)
 
-        model.inc(:followers_count, -1)
+        model.inc(followers_count: -1)
         model.after_unfollowed_by(self) if model.respond_to?('after_unfollowed_by')
         self.before_unfollow(model) if self.respond_to?('before_unfollow')
 
-        self.inc(:follows_count, -1)
+        self.inc(follows_count: -1)
         self.after_unfollow(model) if self.respond_to?('after_unfollow')
 
         return true
